@@ -6,6 +6,7 @@ import processing.core.PApplet;
 import tt.map.Map;
 import tt.map.MapLoader;
 import tt.map.Position;
+import tt.player.Tank;
 
 
 public class Main extends PApplet{
@@ -26,6 +27,9 @@ public class Main extends PApplet{
     public void draw() {
         background(255);
         map.draw(map.smoothMap());
+        fill(tank.getSymbol());
+        rect(tank.getX() * 10, tank.getY() * 10, 10, 10);
+        drawTankAngle(tank.getAngle());
     }
 
     private void drawMap(List<List<Integer>> heightMap) {
@@ -38,6 +42,29 @@ public class Main extends PApplet{
         }
     }
 
+    public void drawTankAngle(double angle) {
+        int x = tank.getX() * 10 + 5;
+        int y = tank.getY() * 10 + 5;
+        
+    }
+
+
+    public class keyPressed implements PApplet.KeyListener{
+        public void keyPressed() {
+            if (key == 'w') {
+                map.movePlayer(Position.UP);
+            } else if (key == 's') {
+                map.movePlayer(Position.DOWN);
+            } else if (key == 'a') {
+                map.movePlayer(Position.LEFT);
+            } else if (key == 'd') {
+                map.movePlayer(Position.RIGHT);
+            } else if (key == 'q'){
+                tank.rotateTower(-5);
+            } else if (key == 'e'){
+                tank.rotateTower(5);
+        }
+    }
 
     public static void main(String[] args) {
         System.out.println("Hello world!");
