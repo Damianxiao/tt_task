@@ -11,6 +11,13 @@ import tt.player.Tank;
 
 public class Main extends PApplet{
     private Map map;
+    private Tank tank;
+
+    // setup
+    public void setup() {
+        tank = new Tank('A', 100, 100, 100);
+        keyPressed = new KeyPressed();
+    }
 
     // set map size
     public void settings() {
@@ -43,28 +50,38 @@ public class Main extends PApplet{
     }
 
     public void drawTankAngle(double angle) {
-        int x = tank.getX() * 10 + 5;
-        int y = tank.getY() * 10 + 5;
-        
+        int x = tank.getX()+16;
+        int y = tank.getY()+16;
+        beginShape();
+        vertex(x, y);
+        vertex(centerX - 16, centerY - 16);
+        vertex(centerX + 16, centerY - 16);
+        // vertex(x + (int) (Math.cos(Math.toRadians(angle)) * 10), y + (int) (Math.sin(Math.toRadians(angle)) * 10));
+        float angleMarkerX = centerX - 16 * Math.cos(Math.toRadians(angle));
+        float angleMarkerY = centerY - 16 * Math.sin(Math.toRadians(angle));
+        line(centerX, centerY, angleMarkerX, angleMarkerY);
     }
 
 
     public class keyPressed implements PApplet.KeyListener{
         public void keyPressed() {
-            if (key == 'w') {
-                map.movePlayer(Position.UP);
-            } else if (key == 's') {
-                map.movePlayer(Position.DOWN);
-            } else if (key == 'a') {
+            if (key == 'a') {
                 map.movePlayer(Position.LEFT);
             } else if (key == 'd') {
                 map.movePlayer(Position.RIGHT);
-            } else if (key == 'q'){
+            } else if (key == 's'){
                 tank.rotateTower(-5);
-            } else if (key == 'e'){
+            } else if (key == 'w'){
                 tank.rotateTower(5);
         }
     }
+
+
+    public void towerRotateAnimated(){
+        
+    }
+
+
 
     public static void main(String[] args) {
         System.out.println("Hello world!");
