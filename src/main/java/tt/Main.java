@@ -8,14 +8,13 @@ import tt.map.MapLoader;
 import tt.map.Position;
 import tt.player.Tank;
 
-
-public class Main extends PApplet{
+public class Main extends PApplet {
     private Map map;
     private Tank tank;
 
     // setup
     public void setup() {
-        tank = new Tank('A', 100, 100, 100);
+        tank = new Tank('A', 0, 0, 100, true, 0);
         keyPressed = new KeyPressed();
     }
 
@@ -26,17 +25,18 @@ public class Main extends PApplet{
 
     // load map
     public void loadMap() {
-        Map = MapLoader.loadMap("map.txt");
-        Map.addTrees();
+        map = MapLoader.loadMap("map.txt");
+        map.addTrees();
+        map.smoothMap();
     }
 
     // draw map
     public void draw() {
         background(255);
-        map.draw(map.smoothMap());
         fill(tank.getSymbol());
         rect(tank.getX() * 10, tank.getY() * 10, 10, 10);
         drawTankAngle(tank.getAngle());
+        rotateAnimation();
     }
 
     private void drawMap(List<List<Integer>> heightMap) {
@@ -50,30 +50,52 @@ public class Main extends PApplet{
     }
 
     public void drawTankAngle(double angle) {
-        int x = tank.getX()+16;
-        int y = tank.getY()+16;
+        float tankX = tank.getX() +16;
+        float tankY = tank.getY() +16;
+
         beginShape();
-        vertex(x, y);
-        vertex(centerX - 16, centerY - 16);
-        vertex(centerX + 16, centerY - 16);
-        // vertex(x + (int) (Math.cos(Math.toRadians(angle)) * 10), y + (int) (Math.sin(Math.toRadians(angle)) * 10));
-        float angleMarkerX = centerX - 16 * Math.cos(Math.toRadians(angle));
-        float angleMarkerY = centerY - 16 * Math.sin(Math.toRadians(angle));
-        line(centerX, centerY, angleMarkerX, angleMarkerY);
+        vertex(tankX, tankY);
+        vertex(tankX -16,tankY - 16);
+        vertex(tankX +16,tankY - 16);
+        endShape();
+
+        float angleMarkerX = tankX + cos(radians((float) angle)) * 16;
+        float angleMarkerY = tankY + sin(radians((float) angle)) * 16;
+        line(tankX,tankY,angleMarkerX,angleMarkerY);
     }
 
+    private void rotateAnimation(){
+        beginShape();
+        vertex(tank.getX() + 16, tank.getY() + 16);
+        vertex(tank.getX() - 16, tank.getY() - 16);
+        vertex(tank.getX() + 16, tank.getY() - 16);
+        endShape();
 
-    public class keyPressed implements PApplet.KeyListener{
+        float angleMarkerX = (float) (tank.getX() + 16 * Math.cos(Math.toRadians(tank.getAngle())));
+        float angleMarkerY = (float) (tank.getY() + 16 * Math.sin(Math.toRadians(tank.getAngle())));
+        line(tank.getX(), tank.getY(), angleMarkerX, angleMarkerY);
+    }
+
+    private class keyPressed extends PApplet {
         public void keyPressed() {
-            if (key == 'a') {
-                map.movePlayer(Position.LEFT);
-            } else if (key == 'd') {
-                map.movePlayer(Position.RIGHT);
-            } else if (key == 's'){
-                tank.rotateTower(-5);
-            } else if (key == 'w'){
-                tank.rotateTower(5);
+            // use eft right to move the tank,up down lto rotate the tower,use W S control bullet power
+            if (key == CODED) {
+                if (keyCode == LEFT) {
+                    tank.setX(tank.getX() - 1);
+                } else if (keyCode == RIGHT) {
+                    tank.setX(tank.getX() + 1);
+                } else if (keyCode == UP) {
+                    tank.rotateTower(1);
+                } else if (keyCode == DOWN) {
+                    tank.rotateTower(-1);
+                }
+            } else if(key == 'w') {
+//                tank.setPower(tank.getPower() + 1);
+            } else if (key == 's') {
+//                tank.setPower(tank.getPower() - 1);
+            }
         }
+
     }
 
 
